@@ -17,7 +17,7 @@ import javax.swing.table.DefaultTableModel;
 
      try{
       Class.forName("com.mysql.cj.jdbc.Driver");
-      String connectionUrl="jdbc:mysql://localhost:3306/studreg?"+"user=root&password=root";
+      String connectionUrl="jdbc:mysql://localhost:3306/db_name?"+"user=root&password=root";
        con = DriverManager.getConnection(connectionUrl);
        }  
         catch (ClassNotFoundException ex) {
@@ -35,7 +35,7 @@ import javax.swing.table.DefaultTableModel;
  private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {                                        
                    Connection con = myConnection();
        try{
-           String sql="INSERT INTO reg(`id`,`username`,`password`,`email`) VALUES (?,?,?,?)";
+           String sql="INSERT INTO table_name(`id`,`username`,`password`,`email`) VALUES (?,?,?,?)";
          
 
            PreparedStatement prest,prest2;
@@ -50,8 +50,6 @@ import javax.swing.table.DefaultTableModel;
          } catch (SQLException ex) {
             Logger.getLogger(logframe.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        // TODO add your handling code here:
     }
 
 #Table view!!!!
@@ -60,7 +58,7 @@ public void setpersontabledate(){
       Connection con=myConnection();
       try{
            PreparedStatement prest;
-           String sql ="select * from reg";
+           String sql ="select * from table_name";
            prest= con.prepareStatement(sql);
            ResultSet rs =prest.executeQuery(sql);
            
