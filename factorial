@@ -1,0 +1,42 @@
+<%-- 
+    Document   : index
+    Created on : 03-Jun-2023, 5:04:36 am
+    Author     : JEFF
+--%>
+
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Factorial Calculator</title>
+</head>
+<body>
+    <h1>Factorial Calculator</h1>
+    
+    <form method="post" action="">
+        Enter a number: <input type="number" name="number" required><br>
+        <input type="submit" value="Calculate Factorial">
+    </form>
+    
+    <%-- Check if form is submitted --%>
+    <% if (request.getMethod().equalsIgnoreCase("post")) {
+        int number = Integer.parseInt(request.getParameter("number"));
+        long factorial = calculateFactorial(number);
+    %>
+        <h2>Factorial of <%= number %> is <%= factorial %></h2>
+    <% } %>
+    
+    <%-- Factorial calculation function --%>
+    <%! 
+    public long calculateFactorial(int number) {
+        long factorial = 1;
+        for (int i = 1; i <= number; i++) {
+            factorial *= i;
+        }
+        return factorial;
+    }
+    %>
+    
+</body>
+</html>
