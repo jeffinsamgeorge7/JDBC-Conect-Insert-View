@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center">
+
+        <EditText
+            android:id="@+id/editTextId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="15"
+            android:hint="Id"
+            android:inputType="text"
+            tools:layout_editor_absoluteX="24dp"
+            tools:layout_editor_absoluteY="52dp" />
+
+        <EditText
+            android:id="@+id/editTextName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="15"
+            android:hint="Name"
+            android:inputType="text"
+            tools:layout_editor_absoluteX="24dp"
+            tools:layout_editor_absoluteY="52dp" />
+
+        <EditText
+            android:id="@+id/editTextEmail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="15"
+            android:hint="Email"
+            android:inputType="text"
+            tools:layout_editor_absoluteX="24dp"
+            tools:layout_editor_absoluteY="112dp" />
+
+        <EditText
+            android:id="@+id/editTextPhone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="15"
+            android:hint="Phone"
+            android:inputType="text"
+            tools:layout_editor_absoluteX="24dp"
+            tools:layout_editor_absoluteY="169dp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/buttonAdd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add"
+                tools:layout_editor_absoluteX="28dp"
+                tools:layout_editor_absoluteY="253dp"
+                android:onClick="insert"/>
+
+            <Button
+                android:id="@+id/buttonView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="View"
+                android:onClick="viewData"
+                tools:layout_editor_absoluteX="136dp"
+                tools:layout_editor_absoluteY="253dp" />
+
+            <Button
+                android:id="@+id/buttonUpdate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="Update"
+                android:onClick="updateData"
+                tools:layout_editor_absoluteX="136dp"
+                tools:layout_editor_absoluteY="253dp" />
+
+            <Button
+                android:id="@+id/buttonDelete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="Delete"
+                android:onClick="deleteData"
+                tools:layout_editor_absoluteX="136dp"
+                tools:layout_editor_absoluteY="253dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+        >
+            <Button
+                android:id="@+id/buttonSearch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="Search"
+                android:onClick="viewDataByName"
+                tools:layout_editor_absoluteX="136dp"
+                tools:layout_editor_absoluteY="253dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/fl"
+        android:layout_marginTop="8dp"
+        android:layout_width="300dp"
+        android:orientation="vertical"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"/>
+</LinearLayout>
+
+package com.example.lab_db_fl;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class MainActivity extends AppCompatActivity {
+
+    EditText edId, edName, edEmail, edPhone;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        edId = findViewById(R.id.editTextId);
+        edName = findViewById(R.id.editTextName);
+        edEmail = findViewById(R.id.editTextEmail);
+        edPhone = findViewById(R.id.editTextPhone);
+    }
+
+    public void insert(View view){
+        try{
+            String id = edId.getText().toString();
+            String name = edName.getText().toString();
+            String email = edEmail.getText().toString();
+            String phone = edPhone.getText().toString();
+
+            SQLiteDatabase db = openOrCreateDatabase("userDb3", Context.MODE_PRIVATE, null);
+            db.execSQL("create table IF NOT EXISTS userinfos(id INTEGER PRIMARY KEY, name VARCHAR, email VARCHAR, phone VARCHAR)");
+
+            String insertQuery = "insert into userinfos values('"+id+"', '"+name+"', '"+email+"', '"+phone+"')";
+            db.execSQL(insertQuery);
+            db.close();
+            Toast.makeText(MainActivity.this, "User added to the database", Toast.LENGTH_SHORT).show();
+
+            edId.setText("");
+            edName.setText("");
+            edEmail.setText("");
+            edPhone.setText("");
+            edId.requestFocus();
+        }catch (Exception ex){
+            Toast.makeText(MainActivity.this, "Failed to add the user: "+ex.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void viewData(View view){
+        String id = edId.getText().toString();
+        FrameLayout fl = findViewById(R.id.fl);
+        TextView tv = new TextView(this);
+
+        SQLiteDatabase db = openOrCreateDatabase("userDb3", Context.MODE_PRIVATE, null);
+        try{
+            String viewQuery = "select * from userinfos";
+            Cursor c = db.rawQuery(viewQuery,null);
+            if(c.getCount() == 0){
+                Toast.makeText(getApplicationContext(), "No Record", Toast.LENGTH_SHORT).show();
+            }else{
+                StringBuffer buffer = new StringBuffer();
+                while(c.moveToNext()){
+                    buffer.append("User Id: "+c.getString(0)+"\n");
+                    buffer.append("Name: "+c.getString(1)+"\n");
+                    buffer.append("Email: "+c.getString(2)+"\n");
+                    buffer.append("Phone: "+c.getString(3)+"\n\n");
+                }
+                tv.setText(buffer.toString());
+                fl.addView(tv);
+            }
+        }catch (Exception e){
+            Toast.makeText(getApplicationContext(), String.valueOf(e), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void viewDataByName(View view){
+        String name = edName.getText().toString();
+        FrameLayout fl = findViewById(R.id.fl);
+        TextView tv = new TextView(this);
+
+        SQLiteDatabase db = openOrCreateDatabase("userDb3", Context.MODE_PRIVATE, null);
+        try{
+            String viewQuery = "select * from userinfos where name='"+name+"'";
+            Cursor c = db.rawQuery(viewQuery,null);
+            if(c.getCount() == 0){
+                Toast.makeText(getApplicationContext(), "No user exists with that name", Toast.LENGTH_SHORT).show();
+            }else{
+                StringBuffer buffer = new StringBuffer();
+                while(c.moveToNext()){
+                    buffer.append("User Id: "+c.getString(0)+"\n");
+                    buffer.append("Name: "+c.getString(1)+"\n");
+                    buffer.append("Email: "+c.getString(2)+"\n");
+                    buffer.append("Phone: "+c.getString(3)+"\n\n");
+                }
+                tv.setText(buffer.toString());
+                fl.addView(tv);
+            }
+        }catch (Exception e){
+            Toast.makeText(getApplicationContext(), String.valueOf(e), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void updateData(View view){
+
+        SQLiteDatabase db = openOrCreateDatabase("userDb3", Context.MODE_PRIVATE, null);
+        if(db.isOpen()){
+            String id = edId.getText().toString();
+            String name = edName.getText().toString();
+            String email = edEmail.getText().toString();
+            String phone = edPhone.getText().toString();
+
+            String updateQuery = "update userinfos set name='"+name+"', email='"+email+"', phone='"+phone+"' where id='"+id+"'";
+            try{
+                db.execSQL(updateQuery);
+                db.close();
+                Toast.makeText(this,"User information updated", Toast.LENGTH_SHORT).show();
+                recreate();
+            }catch (Exception e){
+                Toast.makeText(this,"Error: "+e, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+    public void deleteData(View view){
+
+        SQLiteDatabase db = openOrCreateDatabase("userDb3", Context.MODE_PRIVATE, null);
+        if(db.isOpen()){
+            String id = edId.getText().toString();
+            String deleteQuery = "delete from userinfos where id='"+id+"'";
+            try{
+                db.execSQL(deleteQuery);
+                db.close();
+                Toast.makeText(this,"User deleted", Toast.LENGTH_SHORT).show();
+                recreate();
+            }catch (Exception e){
+                Toast.makeText(this,"Error: "+e, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+}
