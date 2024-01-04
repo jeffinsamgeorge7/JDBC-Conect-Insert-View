@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    tools:context=".MainActivity">
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Show Popup"
+        android:onClick="showPopup"/>
+
+</LinearLayout>
+
+//--- create a menu resource file name popup_menu.xml and copy paste the code below ---//
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/popitem1" android:title="Popup Item 1"/>
+    <item android:id="@+id/popitem2" android:title="Popup Item 2"/>
+    <item android:id="@+id/popitem3" android:title="Popup Item 3"/>
+    <item android:id="@+id/popitem4" android:title="Popup Item 4"/>
+</menu>
+
+//mainactivity.java
+package com.example.lab_popup_menu;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.PopupMenu;
+import android.widget.Toast;
+
+public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener{
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+    }
+    public void showPopup(View view){
+        PopupMenu popup = new PopupMenu(this, view);
+        popup.setOnMenuItemClickListener(this);
+        popup.inflate(R.menu.popup_menu);
+        popup.show();
+    }
+
+    //to handle the clicks on the popup button
+    @Override
+    public boolean onMenuItemClick(MenuItem menuItem) {
+        if(menuItem.getItemId() == R.id.popitem1){
+            Toast.makeText(this, "Popup Item 1 clicked", Toast.LENGTH_SHORT).show();
+        } else if (menuItem.getItemId() == R.id.popitem2) {
+            Toast.makeText(this, "Popup Item 2 clicked", Toast.LENGTH_SHORT).show();
+        }else if (menuItem.getItemId() == R.id.popitem3) {
+            Toast.makeText(this, "Popup Item 3 clicked", Toast.LENGTH_SHORT).show();
+        }else if(menuItem.getItemId() == R.id.popitem4){
+            Toast.makeText(this, "Popup Item 4 clicked", Toast.LENGTH_SHORT).show();
+        }
+        return false;
+    }
+}
